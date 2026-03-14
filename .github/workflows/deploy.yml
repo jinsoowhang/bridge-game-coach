@@ -24,11 +24,13 @@ jobs:
           node-version: 20
           cache: npm
 
-      - run: npm ci
+      - run: npm install
 
-      - run: npm run build -w @bridge-coach/engine
+      - name: Build engine
+        run: cd packages/engine && npx tsc
 
-      - run: npm run build -w @bridge-coach/client
+      - name: Build client
+        run: cd packages/client && npx tsc && npx vite build
 
       - uses: actions/upload-pages-artifact@v3
         with:
