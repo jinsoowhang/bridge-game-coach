@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Bid, Card } from '@bridge-coach/engine';
 import { useGameStore } from '../stores/useGameStore';
@@ -17,11 +17,19 @@ export function PlayPage() {
     useGameStore();
   const { coachingMode, handsPlayed } = useSettingsStore();
 
+  const [showCoachingPrompt, setShowCoachingPrompt] = useState(false);
+
   useEffect(() => {
     if (phase === 'idle') {
       startHand();
     }
   }, []);
+
+  useEffect(() => {
+    if (handsPlayed === 5 && coachingMode === 'always-on' && phase === 'complete') {
+      setShowCoachingPrompt(true);
+    }
+  }, [handsPlayed, phase]);
 
   if (!gameState) {
     return (
@@ -113,6 +121,34 @@ export function PlayPage() {
           onNextHand={startHand}
           onGoHome={() => navigate('/')}
         />
+      )}
+
+      {showCoachingPrompt && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60] p-4">
+          <div className="bg-[var(--felt-dark)] border-2 border-[var(--gold)] rounded-xl p-6 max-w-sm w-full text-center">
+            <h2 className="text-lg font-serif text-[var(--gold)] mb-2">Nice progress!</h2>
+            <p className="text-sm text-[var(--gold-light)] mb-4">
+              You've played 5 hands! Want to try without automatic hints? You can always tap "Hint" when you need help.
+            </p>
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={() => {
+                  useSettingsStore.getState().setCoachingMode('hint-button');
+                  setShowCoachingPrompt(false);
+                }}
+                className="bg-[var(--gold)] text-[var(--felt-dark)] font-bold py-3 rounded-lg cursor-pointer"
+              >
+                Switch to Hint Button
+              </button>
+              <button
+                onClick={() => setShowCoachingPrompt(false)}
+                className="text-[var(--gold)] py-2 text-sm cursor-pointer hover:underline"
+              >
+                Keep Automatic Hints
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
