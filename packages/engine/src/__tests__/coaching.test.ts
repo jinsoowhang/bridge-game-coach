@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { getBiddingHint, getPlayHint } from '../coaching.js';
 import { createCard } from '../card.js';
 import { createInitialState, applyAction } from '../game-state.js';
-import type { Card, Position, Bid, Contract } from '../types.js';
+import type { Card, Position, Bid, Contract, BridgeState } from '../types.js';
 
 // ===== Test hands =====
 
