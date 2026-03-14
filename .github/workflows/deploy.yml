@@ -27,10 +27,12 @@ jobs:
       - run: npm install
 
       - name: Build engine
-        run: cd packages/engine && npx tsc
+        working-directory: packages/engine
+        run: npx tsc
 
       - name: Build client
-        run: cd packages/client && npx tsc && npx vite build
+        working-directory: packages/client
+        run: npx tsc && npx vite build
 
       - uses: actions/upload-pages-artifact@v3
         with:
